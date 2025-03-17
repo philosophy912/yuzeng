@@ -1,0 +1,6 @@
+<resources>
+    <string-array name="translation_types">
+        <item>文本翻译</item>
+<!--        <item>翻译评估</item>-->
+    </string-array>
+</resources>

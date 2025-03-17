@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">文档翻译</string>
+    <string name="selectFile">请选择文件</string>
+    <string name="LabelSelectFile">选中的文件：</string>
+    <string name="NoFileSelected">没有文件被选中</string>
+    <string name="Engine">翻译引擎:</string>
+    <string name="TargetLanguage">目标语言:</string>
+    <string name="StartTranslation">开始翻译</string>
+    <string name="server_base_url">http://172.20.10.2:8080/</string>
+    <string name="translate_type">翻译类型</string>
+    <string name="download_type">下载状态</string>
+    <string name="start_download">开始下载</string>
+    <string-array name="translation_engines">
+<!--        <item>deepl</item>-->
+        <item>deepseek</item>
+    </string-array>
+    <string-array name="target_languages">
+        <item>中文</item>
+        <item>英文</item>
+        <item>西班牙文</item>
+    </string-array>
+</resources>

@@ -1,0 +1,5 @@
+flask
+loguru
+flask_cors
+python-docx
+openai
