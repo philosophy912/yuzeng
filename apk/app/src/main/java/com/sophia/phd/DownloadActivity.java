@@ -1,36 +1,40 @@
 package com.sophia.phd;
 
-import android.content.Intent;
-import android.content.res.Resources;
+import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.webkit.MimeTypeMap;
+import android.widget.TextView;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.view.View;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.util.Log;
+import android.widget.Toast;
+import android.os.Handler;
+import android.os.Environment;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import okhttp3.ResponseBody;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.GET;
+import okhttp3.ResponseBody;
 import retrofit2.http.Streaming;
+import retrofit2.http.GET;
 
 public class DownloadActivity extends AppCompatActivity {
-
 
     private final String TAG = DownloadActivity.class.getSimpleName();
 
@@ -140,45 +144,79 @@ public class DownloadActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("RestrictedApi")
     private boolean writeResponseBodyToDisk(ResponseBody body, String fileUrl) {
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+
         try {
-            File futureStudioIconFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), getFileNameFromUrl(fileUrl));
-            Log.d(TAG, "futureStudioIconFile: " + futureStudioIconFile.getAbsolutePath());
-            InputStream inputStream = null;
-            OutputStream outputStream = null;
+            String fileName = getFileNameFromUrl(fileUrl);
+            if (TextUtils.isEmpty(fileName)) {
+                Log.e(TAG, "Invalid file name derived from URL.");
+                return false;
+            }
 
-            try {
-                byte[] fileReader = new byte[4096];
-                long fileSize = body.contentLength();
-                long fileSizeDownloaded = 0;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                // For Android 10 (API 29) and above, use MediaStore
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Downloads.DISPLAY_NAME, fileName);
+                values.put(MediaStore.Downloads.MIME_TYPE, getMimeType(fileName));
+                values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
 
-                inputStream = body.byteStream();
-                outputStream = new FileOutputStream(futureStudioIconFile);
+                ContentResolver resolver = getContentResolver();
+                Uri uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
 
-                while (true) {
-                    int read = inputStream.read(fileReader);
-                    if (read == -1) {
-                        break;
-                    }
-                    outputStream.write(fileReader, 0, read);
-                    fileSizeDownloaded += read;
-                    Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
+                if (uri == null) {
+                    Log.e(TAG, "Failed to create new MediaStore record.");
+                    return false;
                 }
 
-                outputStream.flush();
-                return true;
-            } catch (IOException e) {
+                outputStream = resolver.openOutputStream(uri);
+            } else {
+                // For Android 9 (API 28) and below, use traditional file system
+                File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                if (!downloadsDir.exists() && !downloadsDir.mkdirs()) {
+                    Log.e(TAG, "Failed to create downloads directory.");
+                    return false;
+                }
+
+                File destinationFile = new File(downloadsDir, fileName);
+                outputStream = new FileOutputStream(destinationFile);
+            }
+
+            if (outputStream == null) {
+                Log.e(TAG, "Failed to open output stream.");
                 return false;
-            } finally {
+            }
+
+            inputStream = body.byteStream();
+            byte[] fileReader = new byte[4096];
+            long fileSize = body.contentLength();
+            long fileSizeDownloaded = 0;
+
+            int read;
+            while ((read = inputStream.read(fileReader)) != -1) {
+                outputStream.write(fileReader, 0, read);
+                fileSizeDownloaded += read;
+                Log.d(TAG, "File download progress: " + fileSizeDownloaded + " of " + fileSize);
+            }
+
+            outputStream.flush();
+            return true;
+        } catch (IOException e) {
+            Log.e(TAG, "Error writing to output stream: " + e.getMessage());
+            return false;
+        } finally {
+            try {
                 if (inputStream != null) {
-                    inputStream.close(); // 确保在后台线程中关闭
+                    inputStream.close();
                 }
                 if (outputStream != null) {
-                    outputStream.close(); // 确保在后台线程中关闭
+                    outputStream.close();
                 }
+            } catch (IOException e) {
+                Log.e(TAG, "Error closing streams: " + e.getMessage());
             }
-        } catch (IOException e) {
-            return false;
         }
     }
 
@@ -186,6 +224,19 @@ public class DownloadActivity extends AppCompatActivity {
     private String getFileNameFromUrl(String url) {
         String fileName = url.substring(url.lastIndexOf("/") + 1);
         return fileName;
+    }
+
+    // 新增方法，获取文件MIME类型
+    private String getMimeType(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());
+        }
+        if (type == null) {
+            type = "application/octet-stream"; // 默认MIME类型
+        }
+        return type;
     }
 
     // 新增超时处理逻辑
