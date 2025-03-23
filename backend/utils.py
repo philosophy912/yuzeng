@@ -49,13 +49,3 @@ def write_doc_content(contents: str, file_name: str):
     doc.add_paragraph(contents)
 
     doc.save(file_name)
-
-
-if __name__ == '__main__':
-    file = "/Users/lizhe/Downloads/role.docx"
-    file_contents = read_doc_content(file)
-    print(file_contents)
-
-    # 示例：将读取的内容写入到一个新的 .docx 文件中
-    output_file = "/Users/lizhe/Downloads/output_role.docx"
-    write_doc_content(file_contents, output_file)

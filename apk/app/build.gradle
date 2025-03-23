@@ -1,13 +1,13 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.application' // 确保应用了 android 应用插件
 
 android {
-    namespace 'com.sophia.phd' // 添加命名空间
-    compileSdk 34
+    namespace 'com.philosophy.translate' // 添加命名空间配置
+    compileSdkVersion 33
 
     defaultConfig {
-        applicationId "com.sophia.phd"
-        minSdk 21
-        targetSdk 34
+        applicationId "com.philosophy.translate"
+        minSdkVersion 21
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 
@@ -17,19 +17,20 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
-    // 添加 Material Components 库依赖
-    implementation 'com.google.android.material:material:1.9.0'
-    // 添加 okhttp3 库依赖
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    // 添加 retrofit2 库依赖
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    // 添加 retrofit2 的 gson converter 库依赖
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    // ...
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
 }

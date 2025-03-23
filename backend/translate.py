@@ -8,6 +8,7 @@
 # --------------------------------------------------------
 import os
 from typing import Tuple
+import deepl
 
 from loguru import logger  # 导入 logger 模块
 from openai import OpenAI
@@ -66,5 +67,16 @@ def deepseek_evaluate(source_text: str, translated_text: str) -> str:
         max_tokens=2000
     )
     evaluation_result = response.choices[0].message.content
-
     return evaluation_result
+
+
+def deepl_translate(content: str, target_lang: str) -> str:
+    api_key = os.getenv('DEEPL_KEY')
+    translator = deepl.Translator(api_key)
+    result = translator.translate_text(
+        content,
+        target_lang=target_lang.upper(),
+        formality='prefer_more'
+    )
+    logger.debug("DeepL 翻译成功")
+    return result.text

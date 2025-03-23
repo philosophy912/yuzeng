@@ -3,3 +3,4 @@ loguru
 flask_cors
 python-docx
 openai
+deepl

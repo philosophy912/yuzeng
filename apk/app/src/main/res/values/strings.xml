@@ -1,20 +1,31 @@
 <resources>
-    <string name="app_name">文档翻译</string>
-    <string name="selectFile">请选择文件</string>
-    <string name="LabelSelectFile">选中的文件：</string>
-    <string name="NoFileSelected">没有文件被选中</string>
-    <string name="Engine">翻译引擎:</string>
-    <string name="TargetLanguage">目标语言:</string>
-    <string name="StartTranslation">开始翻译</string>
-    <string name="server_base_url">http://8.137.100.27:8080/</string>
-    <string name="translate_type">翻译类型</string>
-    <string name="download_type">下载状态</string>
-    <string name="start_download">开始下载</string>
-    <string-array name="translation_engines">
-<!--        <item>deepl</item>-->
-        <item>deepseek</item>
+    <string name="app_name">翻译评估系统</string>
+    <string name="translate_button">翻译系统</string>
+    <string name="evaluate_button">评估系统</string>
+    <string name="select_system">请选择以下系统</string>
+    <!-- 新增字符串资源用于显示页面标题 -->
+    <string name="evaluate_activity_title">翻译评估系统</string>
+    <!-- 新增字符串资源用于显示标签和按钮 -->
+    <string name="select_file_button">请选择原始文件</string>
+    <!-- 新增字符串资源用于显示标签和按钮 -->
+    <string name="select_origin_file_button">请选择文件</string>
+    <!-- 新增字符串资源用于选择翻译文件按钮 -->
+    <string name="select_translate_file_button">请选择翻译文件</string>
+    <!-- 新增字符串资源用于显示“您选择的文件是：” -->
+    <string name="selected_file_text">您选择的文件是：</string>
+    <!-- 新增字符串资源用于开始评估按钮 -->
+    <string name="start_evaluation_button">开始评估</string>
+    <string name="select_model_text">请选择模型：</string>
+    <string name="translate_activity_title">内容翻译系统</string>
+    <string name="start_translate_button">开始翻译</string>
+    <string name="select_language_text">目标语言：</string>
+    <string name="back_button_text">返回</string>
+    <string name="base_url">http://8.137.100.27:8080/</string>
+    <string-array name="models">
+        <item>Deepseek</item>
+        <item>Deepl</item>
     </string-array>
-    <string-array name="target_languages">
+    <string-array name="language">
         <item>中文</item>
         <item>英文</item>
         <item>西班牙文</item>

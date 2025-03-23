@@ -1,140 +1,41 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/white">
+    android:padding="16dp">
 
-    <!-- 第一行：Label 和 Button -->
-    <LinearLayout
-        android:layout_width="match_parent"
+
+    <TextView
+        android:id="@+id/textViewSelectSystem"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="40dp"
+        android:paddingTop="5dp"
+        android:text="@string/select_system"
+        android:textColor="#FF0000"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:textSize="18sp"
-            android:text="@string/selectFile"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:background="@drawable/button_border" />
-    </LinearLayout>
-
-    <!-- 第二行：两个 Label -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:text="@string/LabelSelectFile"
-            style="@style/TextAppearance.MaterialComponents.Body1" />
-
-        <TextView
-            android:id="@+id/selectedFileName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/NoFileSelected"
-            style="@style/TextAppearance.MaterialComponents.Body1" />
-    </LinearLayout>
-
-    <!-- 第三行：Label 和 Spinner -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:text="@string/Engine"
-            style="@style/TextAppearance.MaterialComponents.Body1" />
-
-        <Spinner
-            android:id="@+id/serviceSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:entries="@array/translation_engines" />
-    </LinearLayout>
-
-    <!-- 第四行：Label 和 Spinner -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:text="@string/TargetLanguage"
-            style="@style/TextAppearance.MaterialComponents.Body1" />
-
-        <Spinner
-            android:id="@+id/languageSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:entries="@array/target_languages" />
-    </LinearLayout>
-
-    <!-- 新增第五行：Label 和 Spinner -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:text="@string/translate_type"
-            style="@style/TextAppearance.MaterialComponents.Body1" />
-
-        <Spinner
-            android:id="@+id/translationTypeSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:entries="@array/translation_types" />
-    </LinearLayout>
-
-    <!-- 第五行：Button -->
     <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:text="@string/StartTranslation"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
-        style="@style/Widget.MaterialComponents.Button"
-        android:background="@drawable/button_border_blue" />
+        android:id="@+id/translate"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/textViewSelectSystem"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="24dp"
+        android:background="#FFDDC1"
+        android:text="@string/translate_button" />
 
-    <!-- 添加 ProgressBar -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:visibility="gone" />
-</LinearLayout>
+    <Button
+        android:id="@+id/evaluate"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/translate"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="24dp"
+        android:background="#FFDDC1"
+        android:text="@string/evaluate_button" />
+</RelativeLayout>

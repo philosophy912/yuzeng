@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"> <!-- 增加整体内边距 -->
+
+    <!-- 使用LinearLayout包裹 backButton 和 textViewTranslate -->
+    <LinearLayout
+        android:id="@+id/firstLineLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <Button
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/back_button_text"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/white"
+            android:padding="12dp" />
+
+        <TextView
+            android:id="@+id/textViewTranslate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/translate_activity_title"
+            android:textColor="#FF0000"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginStart="16dp"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/selectFileButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/firstLineLayout"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/select_origin_file_button"
+        android:textColor="@color/white"
+        android:padding="12dp" />
+
+    <!-- 新增布局：您选择的文件是： -->
+    <LinearLayout
+        android:id="@+id/originFileLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/selectFileButton"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/selected_file_text"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/selectedTranslateFileName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <!-- 新增布局：请选择模型 -->
+    <LinearLayout
+        android:id="@+id/moduleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/originFileLayout"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:text="@string/select_model_text"
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/modelSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:entries="@array/models"/>
+    </LinearLayout>
+
+    <!-- 新增布局：请选择语言 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/moduleLayout"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="129dp"
+            android:layout_height="wrap_content"
+            android:text="@string/select_language_text"
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/languageSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:entries="@array/language"/>
+    </LinearLayout>
+
+    <!-- 新增按钮，放置在整个页面的底部 -->
+    <Button
+        android:id="@+id/startTranslateButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/start_translate_button"
+        android:textColor="@color/white"
+        android:padding="12dp" />
+</RelativeLayout>
