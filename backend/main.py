@@ -14,71 +14,76 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_cors import CORS
 from loguru import logger
 
-from translate import deepseek_translate, deepseek_evaluate
-from utils import read_doc_content, write_doc_content
+from translate import deepseek_evaluate
+from utils import write_doc_content, check_file, ERROR_RESPONSE_CODE, check_file_available, \
+    read_content, translate_content
 
 app = Flask(__name__)
 # 初始化CORS，允许所有域名跨域访问
 CORS(app)
 
+@app.route("/evaluate", methods=['POST'])
+def evaluate():
+    logger.info("enter evaluate interface")
+    logger.info(f"{request.form = }")
+    result1 = check_file("file1", request.files)
+    result2 = check_file("file2", request.files)
+    if result1:
+        return jsonify(result1), ERROR_RESPONSE_CODE
+    if result2:
+        return jsonify(result1), ERROR_RESPONSE_CODE
+    file1 = request.files['file1']
+    file2 = request.files['file2']
+    name1, ext1 = os.path.splitext(file1.filename)
+    name2, ext2 = os.path.splitext(file2.filename)
+    check_result1 = check_file_available(file1, ext1)
+    check_result2 = check_file_available(file2, ext2)
+    if check_result1:
+        return jsonify(check_result1), ERROR_RESPONSE_CODE
+    if check_result2:
+        return jsonify(check_result2), ERROR_RESPONSE_CODE
+    template_file1 = os.path.join(os.getcwd(), f"{name1}_temp{ext1}")
+    template_file2 = os.path.join(os.getcwd(), f"{name2}_temp{ext2}")
+    file1.save(template_file1)
+    file2.save(template_file2)
+    content1 = read_content(template_file1, ext1)
+    content2 = read_content(template_file2, ext2)
+    evaluate_result = deepseek_evaluate(content1, content2)
+    name = f"{name1}{ext1}{name2}{ext2}"
+    md5_hash = hashlib.md5(name.encode()).hexdigest()
+    output_path = os.path.join(os.getcwd(), f"{md5_hash}.docx")
+    write_doc_content(evaluate_result, output_path)
+    logger.info(f'file evaluate success')
+    link = url_for('uploaded_file', filename=output_path, _external=True)
+    return jsonify({"message": "评估成功", "status": 20000, "link": link}), 200
 
-@app.route('/dashboard/items', methods=['GET'])
-def dashboard_item():
-    return "hello world"
-
-
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    logger.info("enter upload interface")
+@app.route('/translate', methods=['POST'])
+def translate():
+    logger.info("enter translate interface")
     logger.info(f"{request.form = }")
     # 获取翻译类型和语言类型参数
-    model_type = request.form.get('modelType')
-    translation_type = request.form.get('translationType')
-    language_type = request.form.get('languageType')
-    logger.info(f"{model_type = } {translation_type = } {language_type = }")
-
-    # 检查请求中是否包含文件部分
-    if 'file' not in request.files:
-        return jsonify({"message": "没有文件部分", "status": 40000, "link": ""}), 400
+    model = request.form.get('model')
+    language = request.form.get('language')
+    logger.info(f"{model = } {language = }")
+    result = check_file("file", request.files)
+    if result:
+        return jsonify(result), ERROR_RESPONSE_CODE
     file = request.files['file']
-    logger.info(f"{file = }")
-    # 检查文件名是否为空
-    if file.filename == '':
-        return jsonify({"message": "没有选择文件", "status": 40000, "link": ""}), 400
-
-    # 获取文件扩展名
     name, ext = os.path.splitext(file.filename)
-    logger.info(f"filename = {file.filename}")
-    # 计算文件名的MD5值
+    check_result = check_file_available(file, ext)
+    if check_result:
+        return jsonify(check_result), ERROR_RESPONSE_CODE
+    template_file1 = os.path.join(os.getcwd(), f"{name}_temp{ext}")
+    file.save(template_file1)
+    content = read_content(template_file1, ext)
+    translate_result = translate_content(content, model, language)
     md5_hash = hashlib.md5(name.encode()).hexdigest()
-    allowed_extensions = {'.doc', '.docx', '.txt', '.md'}
-    if ext.lower() not in allowed_extensions:
-        return jsonify({"message": "不支持的文件类型", "status": 40000, "link": ""}), 400
-
-    # 检查文件大小
-    max_size = 100 * 1024 * 1024  # 100MB
-    if file.content_length > max_size:
-        return jsonify({"message": "文件大小超过限制", "status": 40000, "link": ""}), 400
-
-    template_file = os.path.join(os.getcwd(), f"{name}_temp{ext}")
-
-    file_path = os.path.join(os.getcwd(), template_file)
-    file.save(template_file)
-
-    # 修改为保存到当前文件夹下
-    new_filename = f"{name}_{md5_hash}{ext}"
-    output_path = os.path.join(os.getcwd(), new_filename)
-    contents = read_doc_content(file_path)
-    if translation_type == "文本翻译":
-        result_content = deepseek_translate(contents, language_type)
-        logger.debug(f"{result_content = }")
-        write_doc_content(result_content, output_path)
-
-    logger.info(f'file save success {new_filename}')
-
+    output_path = os.path.join(os.getcwd(), f"{name}_{md5_hash}.docx")
+    write_doc_content(translate_result, output_path)
+    logger.info(f'file evaluate success')
     # 返回的下载链接
-    link = url_for('uploaded_file', filename=new_filename, _external=True)
-    return jsonify({"message": "文件上传成功", "status": 20000, "link": link}), 200
+    link = url_for('uploaded_file', filename=output_path, _external=True)
+    return jsonify({"message": "翻译成功", "status": 20000, "link": link}), 200
 
 
 # 添加新的路由来处理文件下载请求

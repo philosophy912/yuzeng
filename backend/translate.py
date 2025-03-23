@@ -7,7 +7,6 @@
 # @Created:     2025/3/17 - 09:06
 # --------------------------------------------------------
 import os
-from typing import Tuple
 import deepl
 
 from loguru import logger  # 导入 logger 模块
@@ -18,6 +17,7 @@ client = OpenAI(
     base_url="https://api.deepseek.com"
 )
 
+api_key = os.getenv('DEEPL_KEY')
 
 def deepseek_translate(content: str, target_lang: str) -> str:
     response = client.chat.completions.create(
@@ -71,7 +71,6 @@ def deepseek_evaluate(source_text: str, translated_text: str) -> str:
 
 
 def deepl_translate(content: str, target_lang: str) -> str:
-    api_key = os.getenv('DEEPL_KEY')
     translator = deepl.Translator(api_key)
     result = translator.translate_text(
         content,

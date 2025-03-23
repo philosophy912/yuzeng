@@ -6,10 +6,72 @@
 # @Author:      lizhe
 # @Created:     2025/3/16 - 16:35
 # --------------------------------------------------------
-
+import dataclasses
 import os
+from typing import Dict, Optional
 
 from docx import Document
+from werkzeug.datastructures import FileStorage
+
+from translate import deepseek_translate, deepl_translate
+
+ERROR_CODE = 40000
+ERROR_RESPONSE_CODE = 400
+MAX_SIZE = 10 * 1024 * 1024  # 100MB
+ALLOWED_EXTENSIONS = {'.docx', '.txt', '.md'}
+
+@dataclasses.dataclass
+class ResponseObject(object):
+    message: str = ""
+    link: str = ""
+    status: int = 20000
+
+
+def check_file(file_key: str, files: Dict) -> Optional[Dict]:
+    if file_key not in files:
+        response_object = ResponseObject()
+        response_object.message = f"没有选择{file_key}文件"
+        response_object.status = ERROR_CODE
+        return dataclasses.asdict(response_object)  # type: ignore
+
+
+def check_file_available(file: FileStorage, ext: str) -> Optional[Dict]:
+    if file.filename == '':
+        response_object = ResponseObject()
+        response_object.message = f"没有选择文件"
+        response_object.status = ERROR_CODE
+        return dataclasses.asdict(response_object)  # type: ignore
+    if file.content_length > MAX_SIZE:
+        response_object = ResponseObject()
+        response_object.message = f"文件大小超过限制"
+        response_object.status = ERROR_CODE
+        return dataclasses.asdict(response_object)  # type: ignore
+    if ext.lower() not in ALLOWED_EXTENSIONS:
+        response_object = ResponseObject()
+        response_object.message = f"仅支持{ALLOWED_EXTENSIONS}类型，当前类型是{ext}"
+        response_object.status = ERROR_CODE
+        return dataclasses.asdict(response_object)  # type: ignore
+
+
+def read_content(abs_file: str, ext: str) -> str:
+    if ext == ".docx":
+        contents = read_doc_content(abs_file)
+    else:
+        with open(abs_file, "r", encoding="utf-8") as f:
+            contents = f.read()
+    return contents
+
+
+def translate_content(content: str, model: str, language: str) -> str:
+    if model.lower() == "deepseek":
+        content = deepseek_translate(content, language)
+    elif model.lower() == "deepl":
+        content = deepl_translate(content, language)
+    else:
+        content = f"{model} not support"
+    return content
+
+
 
 
 def read_doc_content(file_path: str) -> str:

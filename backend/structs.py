@@ -6,6 +6,7 @@
 # @Author:      lizhe
 # @Created:     2025/3/22 - 15:17
 # --------------------------------------------------------
+from dataclasses import dataclass
 from enum import unique, Enum
 
 
@@ -21,6 +22,7 @@ class ModelType(Enum):
                 return item
         raise ValueError(f"{type_} can not be found in {ModelType.__name__}")
 
+
 @unique
 class LanguageType(Enum):
     CHINESE = "chinese"
@@ -33,3 +35,5 @@ class LanguageType(Enum):
             if type_.strip().upper() == item.value.upper():
                 return item
         raise ValueError(f"{type_} can not be found in {LanguageType.__name__}")
+
+
