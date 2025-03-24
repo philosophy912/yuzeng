@@ -16,11 +16,12 @@ from loguru import logger
 
 from translate import deepseek_evaluate
 from utils import write_doc_content, check_file, ERROR_RESPONSE_CODE, check_file_available, \
-    read_content, translate_content
+    read_content, translate_content, get_output_file
 
 app = Flask(__name__)
 # 初始化CORS，允许所有域名跨域访问
 CORS(app)
+
 
 @app.route("/evaluate", methods=['POST'])
 def evaluate():
@@ -42,8 +43,8 @@ def evaluate():
         return jsonify(check_result1), ERROR_RESPONSE_CODE
     if check_result2:
         return jsonify(check_result2), ERROR_RESPONSE_CODE
-    template_file1 = os.path.join(os.getcwd(), f"{name1}_temp{ext1}")
-    template_file2 = os.path.join(os.getcwd(), f"{name2}_temp{ext2}")
+    template_file1 = get_output_file(f"{name1}_temp{ext1}")
+    template_file2 = get_output_file(f"{name2}_temp{ext2}")
     file1.save(template_file1)
     file2.save(template_file2)
     content1 = read_content(template_file1, ext1)
@@ -56,6 +57,7 @@ def evaluate():
     logger.info(f'file evaluate success')
     link = url_for('uploaded_file', filename=output_path, _external=True)
     return jsonify({"message": "评估成功", "status": 20000, "link": link}), 200
+
 
 @app.route('/translate', methods=['POST'])
 def translate():
@@ -73,7 +75,7 @@ def translate():
     check_result = check_file_available(file, ext)
     if check_result:
         return jsonify(check_result), ERROR_RESPONSE_CODE
-    template_file1 = os.path.join(os.getcwd(), f"{name}_temp{ext}")
+    template_file1 = get_output_file(f"{name}_temp{ext}")
     file.save(template_file1)
     content = read_content(template_file1, ext)
     translate_result = translate_content(content, model, language)

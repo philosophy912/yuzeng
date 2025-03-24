@@ -11,6 +11,7 @@ import os
 from typing import Dict, Optional
 
 from docx import Document
+from loguru import logger
 from werkzeug.datastructures import FileStorage
 
 from translate import deepseek_translate, deepl_translate
@@ -19,6 +20,7 @@ ERROR_CODE = 40000
 ERROR_RESPONSE_CODE = 400
 MAX_SIZE = 10 * 1024 * 1024  # 100MB
 ALLOWED_EXTENSIONS = {'.docx', '.txt', '.md'}
+
 
 @dataclasses.dataclass
 class ResponseObject(object):
@@ -72,6 +74,12 @@ def translate_content(content: str, model: str, language: str) -> str:
     return content
 
 
+def get_output_file(name: str):
+    folder_name = os.path.join(os.getcwd(), "temp")
+    os.makedirs(folder_name, exist_ok=True)
+    template_file = os.path.join(folder_name, name)
+    logger.debug(f"{template_file = }")
+    return template_file
 
 
 def read_doc_content(file_path: str) -> str:
