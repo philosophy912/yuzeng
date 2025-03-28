@@ -25,15 +25,13 @@ class ModelType(Enum):
 
 @unique
 class LanguageType(Enum):
-    CHINESE = "chinese"
-    SPANISH = "spanish"
-    ENGLISH = "english"
+    CHINESE = "简体中文", "ZH"
+    SPANISH = "西班牙语", "ES"
+    ENGLISH = "英文", "EN"
 
     @staticmethod
-    def from_name(type_: str):
+    def from_name(value: str):
         for key, item in LanguageType.__members__.items():
-            if type_.strip().upper() == item.value.upper():
+            if value.strip().upper() == item.value[0].upper():
                 return item
-        raise ValueError(f"{type_} can not be found in {LanguageType.__name__}")
-
-
+        raise ValueError(f"{value} can not be found in {LanguageType.__name__}")

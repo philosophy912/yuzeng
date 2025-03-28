@@ -14,6 +14,7 @@ from docx import Document
 from loguru import logger
 from werkzeug.datastructures import FileStorage
 
+from structs import LanguageType
 from translate import deepseek_translate, deepl_translate
 
 ERROR_CODE = 40000
@@ -65,10 +66,11 @@ def read_content(abs_file: str, ext: str) -> str:
 
 
 def translate_content(content: str, model: str, language: str) -> str:
+    language_type = LanguageType.from_name(language)
     if model.lower() == "deepseek":
-        content = deepseek_translate(content, language)
+        content = deepseek_translate(content, language_type.value[-1])
     elif model.lower() == "deepl":
-        content = deepl_translate(content, language)
+        content = deepl_translate(content, language_type.value[-1])
     else:
         content = f"{model} not support"
     return content
