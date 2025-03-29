@@ -10,7 +10,10 @@ import dataclasses
 import os
 from typing import Dict, Optional
 
+import markdown
+from bs4 import BeautifulSoup
 from docx import Document
+from docx.shared import Pt
 from loguru import logger
 from werkzeug.datastructures import FileStorage
 
@@ -66,10 +69,11 @@ def read_content(abs_file: str, ext: str) -> str:
 
 
 def translate_content(content: str, model: str, language: str) -> str:
-    language_type = LanguageType.from_name(language)
+    logger.debug(f"use {model} and translate to {language}")
     if model.lower() == "deepseek":
-        content = deepseek_translate(content, language_type.value[-1])
+        content = deepseek_translate(content, language)
     elif model.lower() == "deepl":
+        language_type = LanguageType.from_name(language)
         content = deepl_translate(content, language_type.value[-1])
     else:
         content = f"{model} not support"
@@ -115,9 +119,59 @@ def write_doc_content(contents: str, file_name: str):
     file_name (str): 输出文件的名称。
     """
     if not file_name.endswith('.docx'):
-        file_name += '.docx'
-
+        raise RuntimeError("file type not valid")
     doc = Document()
     doc.add_paragraph(contents)
+    doc.save(file_name)
 
+
+def write_markdown_content(contents: str, file_name: str):
+    """
+    写入markdown形式的文件
+    :param contents: 要写入的内容列表。
+    :param file_name: 输出文件的名称。
+    :return:
+    """
+    html = markdown.markdown(contents)
+    soup = BeautifulSoup(html, 'html.parser')
+    # 创建Word文档
+    doc = Document()
+    # 设置默认字体
+    style = doc.styles['Normal']
+    font = style.font
+    font.name = 'Arial'
+    font.size = Pt(11)
+
+    # 处理HTML元素
+    for element in soup:
+        if element.name == 'h1':
+            p = doc.add_heading('', level=1)
+            p.add_run(element.text)
+        elif element.name == 'h2':
+            p = doc.add_heading('', level=2)
+            p.add_run(element.text)
+        elif element.name == 'h3':
+            p = doc.add_heading('', level=3)
+            p.add_run(element.text)
+        elif element.name == 'p':
+            doc.add_paragraph(element.text)
+        elif element.name == 'ul':
+            for li in element.find_all('li'):
+                doc.add_paragraph(li.text, style='List Bullet')
+        elif element.name == 'ol':
+            for li in element.find_all('li'):
+                doc.add_paragraph(li.text, style='List Number')
+        elif element.name == 'blockquote':
+            p = doc.add_paragraph()
+            p.add_run(element.text).italic = True
+        elif element.name == 'pre':
+            # 处理代码块
+            code = element.get_text()
+            p = doc.add_paragraph()
+            run = p.add_run(code)
+            run.font.name = 'Courier New'
+            run.font.size = Pt(10)
+            p.paragraph_format.left_indent = Pt(20)
+
+    # 保存Word文档
     doc.save(file_name)

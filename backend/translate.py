@@ -19,7 +19,9 @@ client = OpenAI(
 
 api_key = os.getenv('DEEPL_KEY')
 
+
 def deepseek_translate(content: str, target_lang: str) -> str:
+    logger.debug(f"{target_lang = }")
     response = client.chat.completions.create(
         model="deepseek-chat",
         messages=[
@@ -39,21 +41,23 @@ def deepseek_translate(content: str, target_lang: str) -> str:
         max_tokens=3000
     )
     translated_content = response.choices[0].message.content
+    logger.debug(f"{translated_content = }")
     logger.debug("DeepSeek 翻译成功")
     safe_content = translated_content.encode('utf-8', errors='xmlcharrefreplace').decode('utf-8')
+    logger.debug(f"{safe_content = }")
     return safe_content
 
 
-def deepseek_evaluate(source_text: str, translated_text: str) -> str:
+def deepseek_evaluate(source_text: str, origin_language: str, translated_text: str, target_language: str) -> str:
     evaluation_prompt = f"""
     你是一名法律翻译专家。请检查以下人工翻译合同的质量，并指出以下方面的问题：
     - 术语一致性
     - 语法错误
     - 法律表达是否准确
     - 结构是否符合合同格式
-    原文（西班牙语）：
+    原文（{origin_language}）：
     {source_text}
-    翻译（中文）：
+    翻译（{target_language}）：
     {translated_text}
     请列出发现的问题，并提供修改建议：
     """
@@ -78,4 +82,6 @@ def deepl_translate(content: str, target_lang: str) -> str:
         formality='prefer_more'
     )
     logger.debug("DeepL 翻译成功")
-    return result.text
+    result_content = result.text
+    logger.debug(f"{result_content = }")
+    return result_content
