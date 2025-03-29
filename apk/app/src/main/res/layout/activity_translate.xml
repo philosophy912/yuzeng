@@ -120,6 +120,13 @@
             android:entries="@array/language"/>
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
     <!-- 新增按钮，放置在整个页面的底部 -->
     <Button
         android:id="@+id/startTranslateButton"

@@ -1,6 +1,6 @@
 package com.philosophy.translate.api;
 
-public class Response {
+public class ApiResponse {
     private String message;
     private int status;
     private String link;

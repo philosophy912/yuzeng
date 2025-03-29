@@ -19,15 +19,25 @@
     <string name="translate_activity_title">内容翻译系统</string>
     <string name="start_translate_button">开始翻译</string>
     <string name="select_language_text">目标语言：</string>
+    <string name="select_document_language_text">文档语言：</string>
     <string name="back_button_text">返回</string>
-    <string name="base_url">http://8.137.100.27:8080/</string>
     <string-array name="models">
         <item>Deepseek</item>
         <item>Deepl</item>
     </string-array>
     <string-array name="language">
-        <item>中文</item>
+        <item>简体中文</item>
+        <item>西班牙语</item>
         <item>英文</item>
-        <item>西班牙文</item>
+        <item>德语</item>
+        <item>葡萄牙语</item>
+        <item>意大利语</item>
+        <item>法语</item>
+        <item>俄语</item>
+        <item>日语</item>
+        <item>韩语</item>
+        <item>希腊语</item>
+        <item>阿拉伯语</item>
+        <item>荷兰语</item>
     </string-array>
 </resources>

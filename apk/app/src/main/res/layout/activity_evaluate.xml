@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <!-- 使用LinearLayout包裹 backButton 和 textViewEvaluate -->
     <LinearLayout
@@ -63,13 +65,36 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp" />
     </LinearLayout>
+    <!-- 新增布局：请选择语言 -->
+    <LinearLayout
+        android:id="@+id/originLanguageLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/originFileLayout"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp">
+
+        <TextView
+            android:layout_width="112dp"
+            android:layout_height="wrap_content"
+            android:text="@string/select_document_language_text"/>
+
+        <Spinner
+            android:id="@+id/originSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:entries="@array/language" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/selectTranslateFileButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/select_translate_file_button"
-        android:layout_below="@id/originFileLayout"
+        android:layout_below="@id/originLanguageLayout"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp" />
@@ -110,24 +135,28 @@
         <TextView
             android:layout_width="112dp"
             android:layout_height="wrap_content"
-            android:text="@string/select_model_text"/>
+            android:text="@string/select_document_language_text"/>
 
         <Spinner
-            android:id="@+id/modelSpinner"
+            android:id="@+id/targetSpinner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:entries="@array/models" />
+            android:entries="@array/language" />
     </LinearLayout>
 
     <!-- 新增按钮，放置在整个页面的底部 -->
     <Button
         android:id="@+id/startEvaluationButton"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/start_evaluation_button"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp" />
-</RelativeLayout>
+        android:text="开始评估" />
+
+    <!-- 新增进度条 -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+</LinearLayout>
